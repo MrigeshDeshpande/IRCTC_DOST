@@ -1,7 +1,4 @@
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
+// Seed the trains table with dummy data
 exports.seed = async function (knex) {
   // Deletes ALL existing entries
   await knex("trains").del();

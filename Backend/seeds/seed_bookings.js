@@ -1,9 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
+// Purpose: Seed the bookings table with sample data.
 exports.seed = async function (knex) {
   await knex.transaction(async (trx) => {
     // Deletes ALL existing entries

@@ -1,7 +1,6 @@
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
+// Purpose: Create users table in the database.
+// id: UUID primary key.
+
 exports.up = function (knex) {
   return knex.schema.createTable("users", (table) => {
     table.uuid("id").primary().defaultTo(knex.raw("gen_random_uuid()"));
@@ -13,10 +12,7 @@ exports.up = function (knex) {
   });
 };
 
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
+// Purpose: Drop users table from the database.
 exports.down = function (knex) {
   return knex.schema.dropTable("users");
 };

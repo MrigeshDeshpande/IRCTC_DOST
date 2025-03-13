@@ -1,7 +1,8 @@
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
+// Purpose: Create bookings table in the database.
+// id: UUID primary key.
+// user_id: UUID foreign key referencing users table.
+// train_id: UUID foreign key referencing trains table.
+
 exports.up = function (knex) {
   return knex.schema.createTable("bookings", (table) => {
     table.uuid("id").primary().defaultTo(knex.raw("gen_random_uuid()"));
