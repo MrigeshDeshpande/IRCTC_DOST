@@ -15,6 +15,11 @@ app.get("/", (req, res) => {
   res.send("IRCTC Dost Backend is Running!");
 });
 
+// Routes
+app.use("/api/users", require("./routes/users"));
+app.use("/api/trains", require("./routes/trains"));
+app.use("/api/bookings", require("./routes/bookings"));
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
