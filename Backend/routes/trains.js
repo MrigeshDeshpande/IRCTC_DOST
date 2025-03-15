@@ -11,7 +11,7 @@ const {
 router.get("/", getTrains);
 router.get("/:id", getTrainById);
 router.post("/", createTrain);
-router.put("/:id", updateTrain);
+router.patch("/:id", updateTrain);
 router.delete("/:id", deleteTrain);
 
 module.exports = router;

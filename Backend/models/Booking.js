@@ -37,7 +37,19 @@ class Booking {
 
   static async update(id, bookingData) {
     try {
-      const { user_id, train_id, seat_number, status } = bookingData;
+      // Fetch current booking data to keep existing values if fields are not provided
+      const existingBooking = await pool.query(`SELECT * FROM bookings WHERE id = $1`, [id]);
+      if (existingBooking.rows.length === 0) throw new Error("Booking not found.");
+  
+      const booking = existingBooking.rows[0];
+  
+      // Use existing values if fields are not provided in the request
+      const user_id = bookingData.user_id || booking.user_id;
+      const train_id = bookingData.train_id || booking.train_id;
+      const seat_number = bookingData.seat_number || booking.seat_number;
+      const status = bookingData.status || booking.status;
+  
+      // Update the booking record
       const { rows } = await pool.query(
         `UPDATE bookings
          SET 
@@ -45,15 +57,17 @@ class Booking {
             train_id = $2, 
             seat_number = $3, 
             status = $4 
-        WHERE id = $5 
-        RETURNING *`,
+         WHERE id = $5 
+         RETURNING *`,
         [user_id, train_id, seat_number, status, id]
       );
+  
       return rows[0];
     } catch (error) {
-        throw new Error(error.message);
+      throw new Error(error.message);
     }
   }
+  
 
   static async delete(id) {
     try {
