@@ -2,6 +2,16 @@ const pool = require('../config/db');
 
 class Booking {
   static async getAll() {
+
+  /**
+ * `getAll` Method: Retrieves all booking records from the database.
+ * 
+ * Flow:
+ * 1. Executes an SQL `SELECT` query to fetch all records from the `bookings` table.
+ * 2. Returns an array containing all booking records.
+ * 3. Handles any errors during the database operation and throws a descriptive error message.
+ * 
+ */
     try {
       const { rows } = await pool.query(`SELECT * FROM bookings`);
       return rows;
@@ -10,6 +20,15 @@ class Booking {
     }
   }
 
+  /**
+ * `findById` Method: Retrieves a specific booking record based on the provided `id`.
+ * 
+ * Flow:
+ * 1. Executes an SQL `SELECT` query using the provided `id` as a parameter to fetch the matching booking record.
+ * 2. Returns the booking object if a matching record is found.
+ * 3. Handles any errors during the database operation and throws a descriptive error message.
+ * 
+ */
   static async findById(id) {
     try {
       const { rows } = await pool.query(`SELECT * FROM bookings WHERE id = $1`, [id]);
@@ -19,6 +38,16 @@ class Booking {
     }
   }
 
+  /**
+ * `create` Method: Adds a new booking record to the database after validating and processing the provided data.
+ * 
+ * Flow:
+ * 1. Extracts booking details (`user_id`, `train_id`, `seat_number`, `status`) from the `bookingData` input.
+ * 2. Executes an SQL `INSERT` query to add the new booking record to the `bookings` table.
+ * 3. Returns the newly created booking record as the result.
+ * 4. Handles any errors during the operation and throws a descriptive error message.
+ * 
+ */
   static async create(bookingData) {
     try {
       const { user_id, train_id, seat_number, status } = bookingData;
@@ -35,6 +64,20 @@ class Booking {
     }
   }
 
+  /**
+ * `update` Method: Updates a booking record in the database, ensuring existing values are retained
+ * for fields not provided in the `bookingData` input.
+ * 
+ * Flow:
+ * 1. Fetches the current booking data from the database using the provided `id`.
+ *    - If no booking is found, throws an error indicating the booking does not exist.
+ * 2. Extracts the existing booking details and updates only the fields provided in the `bookingData` input.
+ *    - Fields not provided retain their current values.
+ * 3. Executes an SQL `UPDATE` query to modify the booking record in the database.
+ * 4. Returns the updated booking record as the result.
+ * 5. Handles any errors during the process and throws a descriptive error message.
+ * 
+ */
   static async update(id, bookingData) {
     try {
       // Fetch current booking data to keep existing values if fields are not provided

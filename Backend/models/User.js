@@ -2,6 +2,16 @@ const pool = require("../config/db");
 const bcrypt = require("bcryptjs");
 
 class User {
+
+  /**
+ * `getAll` Method: Retrieves all user records from the database.
+ * 
+ * Flow:
+ * 1. Executes an SQL `SELECT` query to fetch all records from the `users` table.
+ * 2. Returns an array of all user records.
+ * 3. Handles any errors during the database operation and throws a descriptive error message.
+ * 
+ */
   static async getAll() {
     try {
       const result = await pool.query(`SELECT * FROM users`);
@@ -11,6 +21,15 @@ class User {
     }
   }
 
+  /**
+ * `findById` Method: Retrieves a specific user record from the database based on the provided `id`.
+ * 
+ * Flow:
+ * 1. Executes an SQL `SELECT` query using the provided `id` as a parameter to fetch a matching record.
+ * 2. Returns the user object if a matching record is found.
+ * 3. Handles any errors during the database operation and throws a descriptive error message.
+ * 
+ */
   static async findById(id) {
     try {
       const { rows } = await pool.query(`SELECT * FROM users WHERE id = $1`, [
@@ -22,6 +41,22 @@ class User {
     }
   }
 
+  /**
+ * `create` Method: Adds a new user to the database after performing necessary validation checks.
+ * 
+ * Flow:
+ * 1. Extracts `name`, `email`, `password`, and `phone` from the input `userData`.
+ * 2. Validates the input:
+ *    - Ensures all required fields (`name`, `email`, `password`, and `phone`) are provided.
+ *    - Checks if the provided `email` matches a valid email format using a regex pattern.
+ *    - Verifies that the `phone` number is a 10-digit numeric value using a regex pattern.
+ * 3. Checks for duplicate email addresses by querying the database.
+ *    - If a duplicate email is found, throws an error indicating that the email already exists.
+ * 4. If all checks pass, inserts the new user into the database with the provided details.
+ * 5. Returns the newly created user's details as the result.
+ * 6. Handles any errors during the process and throws a descriptive error message.
+ * 
+ */
   static async create(userData) {
     try {
       const { name, email, password, phone } = userData;
@@ -123,7 +158,20 @@ class User {
     }
 }
 
-
+/**
+ * `update` Method: Updates a user's details in the database while preserving existing values for
+ * fields that are not provided in the request.
+ * 
+ * Flow:
+ * 1. Fetches the current user data from the database using the provided `id`.
+ *    - If no user is found, throws an error indicating the user does not exist.
+ * 2. Extracts existing user values and updates only the fields provided in the `userData` input.
+ *    - Fields not provided in the request retain their existing values.
+ * 3. Executes an SQL `UPDATE` query to update the user's details in the database, using the new or retained values.
+ * 4. Returns the updated user object as the result of the operation.
+ * 5. Handles any errors during the process and throws a descriptive error message.
+ * 
+ */
   static async update(id, userData) {
     try {
       // Fetch current user data to keep existing values if fields are not provided
