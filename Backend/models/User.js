@@ -24,6 +24,31 @@ class User {
   static async create(userData) {
     try {
       const { name, email, password, phone } = userData;
+
+      //checking for missing fields
+      if(!name || !email || !password || !phone){
+        throw new Error("All fields are required");
+      }
+
+      //checking if email is valid
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if(!emailPattern.test(email)){
+        throw new Error("Invalid email");
+      }
+
+      //checking if phone is valid
+      const phonePattern = /^[0-9]{10}$/;
+      if(!phonePattern.test(phone)){
+        throw new Error("Invalid phone number");
+      }
+
+      //checking for duplicate email
+      const emailExists = await pool.query(`SELECT * FROM users WHERE email = $1`, [email]);
+      if(emailExists.rows.length > 0){
+        throw new Error("Email already exists");
+      }
+
+      //only insert the user if all checks pass
       const { rows } = await pool.query(
         `INSERT INTO  users 
         (name, email, password, phone) 
