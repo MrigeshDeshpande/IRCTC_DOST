@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const bcrypt = require("bcryptjs");
 
 class User {
   static async getAll() {
@@ -61,6 +62,67 @@ class User {
       throw new Error(error.message);
     }
   }
+
+/**
+ * `login` Method: Handles user authentication and returns user details if authentication is successful.
+ * 
+ * Flow:
+ * 1. Takes `email` and `password` as input parameters.
+ * 2. Converts the `email` to lowercase for normalization and consistency.
+ * 3. Queries the database to check if a user with the provided email exists.
+ *    - If no matching user is found, throws an error indicating invalid credentials.
+ * 4. If a user is found, retrieves the user data and verifies the provided password using bcrypt's compare function.
+ *    - If the password is incorrect, throws an error indicating invalid credentials.
+ * 5. If the credentials are valid, returns an object containing user details (excluding the password for security).
+ * 6. Handles any errors during the process and throws a descriptive error message.
+ *
+ */
+  static async login({email, password}){
+    try{
+      email = email.toLowerCase();
+
+      //checks if user exists
+      const { rows } = await pool.query(`SELECT * FROM users WHERE email = $1`, [email]);
+      if(rows.length === 0)
+      {
+        throw new Error("Invalid email or password");
+      }
+
+      const user = rows[0];
+
+      //checks if password is correct
+      const validPassword = await bcrypt.compare(password, user.password);
+      if(!validPassword){
+        throw new Error("Invalid email or password");
+      }
+
+      //return user excluding password if all checks pass 
+      return {id: user.id, name: user.name, email: user.email, phone: user.phone }    
+    }
+      catch(error){
+        throw new Error(error.message);
+      }
+  }
+
+  /**
+ * `findByEmail` Method: Fetches user details from the database based on the provided email.
+ * 
+ * Flow:
+ * 1. Takes `email` as an input parameter.
+ * 2. Queries the database to find a user matching the provided email.
+ * 3. Returns the user object if found.
+ * 4. Handles any errors during the process and throws a descriptive error message.
+ *
+ */
+  static async findByEmail(email) {
+    try {
+        const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+        return rows[0]; 
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 
   static async update(id, userData) {
     try {
