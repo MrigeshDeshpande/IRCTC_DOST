@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const  authMiddleware  = require("../middleware/authMiddleware");
+
 const {
   getUsers,
   getUserById,
@@ -9,11 +11,14 @@ const {
   loginUser
 } = require("../controllers/userController");
 
-router.get("/", getUsers);
-router.get("/:id", getUserById);
+//pulic routes
 router.post("/", createUser);
-router.patch("/:id", updateUser);
-router.delete("/:id", deleteUser);
 router.post("/login", loginUser);
+
+//Protected routes
+router.get("/", authMiddleware, getUsers);
+router.get("/:id", authMiddleware, getUserById);
+router.patch("/:id", authMiddleware, updateUser);
+router.delete("/:id", authMiddleware, deleteUser);
 
 module.exports = router;

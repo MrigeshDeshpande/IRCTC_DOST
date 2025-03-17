@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+
 
 const getUsers = async (req, res) => {
   try {
@@ -62,7 +64,9 @@ const deleteUser = async (req, res) => {
  * 5. If the user is not found, returns a 401 response with an appropriate error message.
  * 6. Compares the provided `password` with the user's stored password.
  * 7. If the passwords do not match, returns a 401 response with an error message.
- * 8. On successful authentication, responds with a success message and the user's data.
+ * 8.  On successful authentication:
+ *    - Generates a JWT token with the user's ID and an expiration time of 30 days.
+ *    - Responds with the token and the user's details (ID, name, email).
  * 9. Handles any unexpected errors by returning a 500 response with the error details.
  *
  */
@@ -85,13 +89,17 @@ const loginUser = async (req, res) => {
       }
 
       // Compare Passwords
-      const isMatch = password === user.password; 
+      const isMatch = password.trim() === user.password.trim();
       if (!isMatch) {
-          return res.status(401).json({ error: "Incorrect password." });
+        return res.status(401).json({ error: "Incorrect password." });
       }
 
-      res.json({ message: "Login successful", user });
-  } catch (error) {
+
+      //generate JWT token
+      const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: "30d"});
+
+      res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+    } catch (error) {
       res.status(500).json({ error: error.message });
   }
 };
