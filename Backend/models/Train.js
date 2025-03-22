@@ -38,6 +38,27 @@ static async getAll() {
     }
   }
 
+    /**
+   * `findByRoute` Method: Retrieves all trains with the same `source` and `destination`.
+   * 
+   * Flow:
+   * 1. Executes an SQL `SELECT` query to fetch trains that match the given route.
+   * 2. Returns an array of matching trains.
+   * 3. Handles any errors during the database operation and throws a descriptive error message.
+   */
+    static async findByRoute(source, destination) {
+      try {
+        const { rows } = await pool.query(
+          `SELECT * FROM trains WHERE source = $1 AND destination = $2`, 
+          [source, destination]
+        );
+        return rows;
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    }
+  
+
   /**
  * `create` Method: Adds a new train record to the database after validating and processing the provided data.
  * 
