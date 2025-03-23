@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const pool = require("./config/db");
+const railwayRoutes = require("./routes/railwayRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 app.use("/api/users", require("./routes/users"));
 app.use("/api/trains", require("./routes/trains"));
 app.use("/api/bookings", require("./routes/bookings"));
+app.use("/api/railway", railwayRoutes);
 
 // Start Server
 app.listen(PORT, () => {
