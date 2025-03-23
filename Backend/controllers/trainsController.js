@@ -2,16 +2,16 @@ const Train = require("../models/Train");
 
 /**
  * `getTrains` Function: Fetches all train records from the database.
- * 
+ *
  * Flow:
  * 1. Calls the `getAll` method from the `Train` model to retrieve all train records.
  * 2. Returns the list of trains as a JSON response.
  * 3. Handles any errors that occur during the operation and returns an error response.
- * 
+ *
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  * @returns {Object} List of all train records.
- * 
+ *
  */
 const getTrains = async (req, res) => {
   try {
@@ -24,17 +24,17 @@ const getTrains = async (req, res) => {
 
 /**
  * `getTrainById` Function: Retrieves a specific train record based on the provided `id`.
- * 
+ *
  * Flow:
  * 1. Calls the `findById` method from the `Train` model to fetch the train record.
  * 2. Checks if the train record exists and returns it if found.
  * 3. Returns the train record as a JSON response.
  * 4. Handles any errors that occur during the operation and returns an error response.
- * 
+ *
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  * @returns {Object} The train record if found.
- * 
+ *
  */
 const getTrainById = async (req, res) => {
   try {
@@ -70,10 +70,24 @@ const getTrainById = async (req, res) => {
  */
 const createTrain = async (req, res) => {
   try {
-    const { train_number, train_name, source, destination, departure_time, arrival_time } = req.body;
+    const {
+      train_number,
+      train_name,
+      source,
+      destination,
+      departure_time,
+      arrival_time,
+    } = req.body;
 
     console.log(req.body);
-    if (!train_number || !train_name || !source || !destination || !departure_time || !arrival_time) {
+    if (
+      !train_number ||
+      !train_name ||
+      !source ||
+      !destination ||
+      !departure_time ||
+      !arrival_time
+    ) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -82,25 +96,32 @@ const createTrain = async (req, res) => {
     const now = new Date();
 
     if (departure < now) {
-      return res.status(400).json({ error: "Departure time must be in the future" });
+      return res
+        .status(400)
+        .json({ error: "Departure time must be in the future" });
     }
     if (arrival <= departure) {
-      return res.status(400).json({ error: "Arrival time must be after departure time" });
+      return res
+        .status(400)
+        .json({ error: "Arrival time must be after departure time" });
     }
 
     const existingTrain = await Train.findByRoute(source, destination);
 
-    const isOverlap = existingTrain.some(train => {
+    const isOverlap = existingTrain.some((train) => {
       return (
-        (departure >= train.departure_time && departure <= train.arrival_time) ||
+        (departure >= train.departure_time &&
+          departure <= train.arrival_time) ||
         (arrival >= train.departure_time && arrival <= train.arrival_time) ||
-        (departure_time <= train.departure_time && arrival_time >= train.arrival_time)
+        (departure_time <= train.departure_time &&
+          arrival_time >= train.arrival_time)
       );
-    }
-    );
+    });
 
     if (isOverlap) {
-      return res.status(400).json({ error: "Train times overlap with an existing train" });
+      return res
+        .status(400)
+        .json({ error: "Train times overlap with an existing train" });
     }
 
     const newTrain = await Train.create({
@@ -109,7 +130,7 @@ const createTrain = async (req, res) => {
       source,
       destination,
       departure_time,
-      arrival_time
+      arrival_time,
     });
     res.status(201).json(newTrain);
   } catch (error) {
@@ -152,20 +173,25 @@ const updateTrain = async (req, res) => {
     const existingTrain = await Train.findById({
       source: trainToUpdate.source,
       destination: trainToUpdate.destination,
-      _id: { $ne: req.params.id }
-    })
+      _id: { $ne: req.params.id },
+    });
 
     //check for time overlap
-    const isOverlap = existingTrain.some(train => {
+    const isOverlap = existingTrain.some((train) => {
       return (
-        (departure_time >= train.departure_time && departure_time <= train.arrival_time) ||
-        (arrival_time >= train.departure_time && arrival_time <= train.arrival_time) ||
-        (departure_time <= train.departure_time && arrival_time >= train.arrival_time)
+        (departure_time >= train.departure_time &&
+          departure_time <= train.arrival_time) ||
+        (arrival_time >= train.departure_time &&
+          arrival_time <= train.arrival_time) ||
+        (departure_time <= train.departure_time &&
+          arrival_time >= train.arrival_time)
       );
     });
 
     if (isOverlap) {
-      return res.status(400).json({ error: "Train times overlap with an existing train" });
+      return res
+        .status(400)
+        .json({ error: "Train times overlap with an existing train" });
     }
 
     if (departure_time || arrival_time) {
@@ -173,10 +199,14 @@ const updateTrain = async (req, res) => {
       const arrival = arrival_time ? new Date(arrival_time) : null;
 
       if (departure && departure < now) {
-        return res.status(400).json({ error: "Departure time must be in the future" });
+        return res
+          .status(400)
+          .json({ error: "Departure time must be in the future" });
       }
       if (departure && arrival && arrival <= departure) {
-        return res.status(400).json({ error: "Arrival time must be after departure time" });
+        return res
+          .status(400)
+          .json({ error: "Arrival time must be after departure time" });
       }
     }
 

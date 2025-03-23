@@ -5,7 +5,7 @@ console.log("JWT Secret Key:", process.env.JWT_SECRET);
 
 /**
  * Middleware for authenticating users via JWT tokens in the "Authorization" header.
- * 
+ *
  * Flow:
  * 1. Retrieves the `Authorization` header from the request.
  *    - Logs the received header for debugging purposes.
@@ -24,7 +24,7 @@ console.log("JWT Secret Key:", process.env.JWT_SECRET);
  *
  * Error Handling:
  * - Catches and handles unexpected errors during token verification, ensuring appropriate HTTP responses.
- * 
+ *
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  * @param {Function} next - Express next middleware function.
@@ -32,23 +32,22 @@ console.log("JWT Secret Key:", process.env.JWT_SECRET);
  *
  */
 const authMiddleware = (req, res, next) => {
-    const authHeader = req.header("Authorization");
+  const authHeader = req.header("Authorization");
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ error: "Unauthorized: No token provided" });
-    }
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized: No token provided" });
+  }
 
-    const token = authHeader.replace("Bearer ", "").trim();
+  const token = authHeader.replace("Bearer ", "").trim();
 
-    try {
-        const verified = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("Verified User Data:", verified);
-        req.user = verified;
-        next();
-    } catch (error) {
-        res.status(403).json({ error: "Invalid or Expired Token" });
-    }
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Verified User Data:", verified);
+    req.user = verified;
+    next();
+  } catch (error) {
+    res.status(403).json({ error: "Invalid or Expired Token" });
+  }
 };
-
 
 module.exports = authMiddleware;
