@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
+
 const {
   getBookings,
   getBookingById,
@@ -8,10 +11,13 @@ const {
   deleteBooking,
 } = require("../controllers/bookingsController");
 
-router.get("/", getBookings);
-router.get("/:id", getBookingById);
-router.post("/", createBooking);
-router.patch("/:id", updateBooking);
-router.delete("/:id", deleteBooking);
+// Public routes (Only authenticated users can create and view their own bookings)
+router.get("/:id", authMiddleware, getBookingById);
+router.post("/", authMiddleware, createBooking);
+
+// Admin routes (Only admins can view, update, or delete all bookings)
+router.get("/", authMiddleware, adminMiddleware, getBookings);
+router.patch("/:id", authMiddleware, updateBooking);
+router.delete("/:id", authMiddleware, deleteBooking);
 
 module.exports = router;

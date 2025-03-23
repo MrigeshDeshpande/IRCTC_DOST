@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
+
 const {
   getTrains,
   getTrainById,
@@ -8,10 +11,13 @@ const {
   deleteTrain,
 } = require("../controllers/trainsController");
 
+//Public routes
 router.get("/", getTrains);
 router.get("/:id", getTrainById);
-router.post("/", createTrain);
-router.patch("/:id", updateTrain);
-router.delete("/:id", deleteTrain);
+
+//Protected routes
+router.post("/", authMiddleware, adminMiddleware, createTrain);
+router.patch("/:id", authMiddleware, adminMiddleware, updateTrain);
+router.delete("/:id", authMiddleware, adminMiddleware, deleteTrain);
 
 module.exports = router;
