@@ -10,6 +10,9 @@ class Train {
    * 2. Returns an array containing all train records.
    * 3. Handles any errors during the database operation and throws a descriptive error message.
    * 
+   * @returns {Array} List of all trains.
+   * @throws {Error} If an error occurs during the database query.
+   * 
   */
 static async getAll() {
     try {
@@ -28,6 +31,11 @@ static async getAll() {
  * 2. Returns the train object if a matching record is found.
  * 3. Handles any errors during the database operation and throws a descriptive error message.
  * 
+ * 
+ * @param {String} id - The unique identifier of the train.
+ * @returns {Object} The train record if found.
+ * @throws {Error} If an error occurs during the database query or if no record is found.
+ * 
  */
   static async findById(id) {
     try {
@@ -45,6 +53,12 @@ static async getAll() {
    * 1. Executes an SQL `SELECT` query to fetch trains that match the given route.
    * 2. Returns an array of matching trains.
    * 3. Handles any errors during the database operation and throws a descriptive error message.
+   * 
+   * @param {String} source - The starting point of the train route.
+   * @param {String} destination - The final destination of the train route.
+   * @returns {Array} List of trains that match the provided route.
+   * @throws {Error} If an error occurs during the database query.
+   * 
    */
     static async findByRoute(source, destination) {
       try {
@@ -68,6 +82,16 @@ static async getAll() {
  * 2. Executes an SQL `INSERT` query to add the new train record to the `trains` table.
  * 3. Returns the newly created train record as the result.
  * 4. Handles any errors during the operation and throws a descriptive error message.
+ * 
+ * @param {Object} trainData - Data object containing train details.
+ * @param {String} trainData.train_number - The unique number assigned to the train.
+ * @param {String} trainData.train_name - The name of the train.
+ * @param {String} trainData.source - The starting point of the train route.
+ * @param {String} trainData.destination - The final destination of the train route.
+ * @param {String} trainData.departure_time - The time the train departs from the source.
+ * @param {String} trainData.arrival_time - The time the train arrives at the destination.
+ * @returns {Object} The newly created train record.
+ * @throws {Error} If an error occurs during the database operation.
  * 
  */
   static async create(trainData) {
@@ -98,6 +122,17 @@ static async getAll() {
  * 3. Executes an SQL `UPDATE` query to modify the train's record in the database, using the new or retained values.
  * 4. Returns the updated train record as the result of the operation.
  * 5. Handles any errors during the process and throws a descriptive error message.
+ * 
+ * @param {String} id - The unique identifier of the train.
+ * @param {Object} trainData - Data object containing updated train details.
+ * @param {String} [trainData.train_number] - Updated train number.
+ * @param {String} [trainData.train_name] - Updated train name.
+ * @param {String} [trainData.source] - Updated source.
+ * @param {String} [trainData.destination] - Updated destination.
+ * @param {String} [trainData.departure_time] - Updated departure time.
+ * @param {String} [trainData.arrival_time] - Updated arrival time.
+ * @returns {Object} The updated train record.
+ * @throws {Error} If an error occurs during the database operation or if the train is not found.
  * 
  */
   static async update(id, trainData) {
@@ -131,6 +166,19 @@ static async getAll() {
       throw new Error(error.message);
     }
   }  
+
+ /**
+ * `delete` Method: Deletes a train record from the database.
+ *
+ * Flow:
+ * 1. Executes an SQL `DELETE` query using the provided `id` to remove the train record.
+ * 2. Handles any errors during the database operation and throws a descriptive error message.
+ *
+ * @param {String} id - The unique identifier of the train.
+ * @returns {void}
+ * @throws {Error} If an error occurs during the database operation.
+ * 
+*/
 
   static async delete(id) {
     try {

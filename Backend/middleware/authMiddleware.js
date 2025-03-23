@@ -24,6 +24,11 @@ console.log("JWT Secret Key:", process.env.JWT_SECRET);
  *
  * Error Handling:
  * - Catches and handles unexpected errors during token verification, ensuring appropriate HTTP responses.
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @param {Function} next - Express next middleware function.
+ * @returns {Function} Express next middleware function.
  *
  */
 const authMiddleware = (req, res, next) => {

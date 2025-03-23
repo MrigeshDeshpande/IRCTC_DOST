@@ -11,6 +11,9 @@ class Booking {
  * 2. Returns an array containing all booking records.
  * 3. Handles any errors during the database operation and throws a descriptive error message.
  * 
+ * @returns {Array} List of all bookings.
+ * @throws {Error} If an error occurs during the database query.
+ * 
  */
     try {
       const { rows } = await pool.query(`SELECT * FROM bookings`);
@@ -27,6 +30,10 @@ class Booking {
  * 1. Executes an SQL `SELECT` query using the provided `id` as a parameter to fetch the matching booking record.
  * 2. Returns the booking object if a matching record is found.
  * 3. Handles any errors during the database operation and throws a descriptive error message.
+ *
+ * @param {String} id - The unique identifier of the booking.
+ * @returns {Object} The booking record if found.
+ * @throws {Error} If an error occurs during the database query or if no record is found.
  * 
  */
   static async findById(id) {
@@ -46,6 +53,14 @@ class Booking {
  * 2. Executes an SQL `INSERT` query to add the new booking record to the `bookings` table.
  * 3. Returns the newly created booking record as the result.
  * 4. Handles any errors during the operation and throws a descriptive error message.
+ * 
+ * @param {Object} bookingData - Data object containing booking details.
+ * @param {String} bookingData.user_id - ID of the user making the booking.
+ * @param {String} bookingData.train_id - ID of the train being booked. 
+ * @param {Number} bookingData.seat_number - Seat number being booked.
+ * @param {String} bookingData.status - Status of the booking (e.g., "booked | cancelled | waiting ").
+ * @returns {Object} The newly created booking record.
+ * @throws {Error} If an error occurs during the database operation.
  * 
  */
   static async create(bookingData) {
@@ -77,6 +92,15 @@ class Booking {
  * 4. Returns the updated booking record as the result.
  * 5. Handles any errors during the process and throws a descriptive error message.
  * 
+ * @param {String} id - The unique identifier of the booking.
+ * @param {Object} bookingData - Data object containing updated booking details.
+ * @param {String} [bookingData.user_id] - Updated user ID.
+ * @param {String} [bookingData.train_id] - Updated train ID.
+ * @param {Number} [bookingData.seat_number] - Updated seat number.
+ * @param {String} [bookingData.status] - Updated booking status.
+ * @returns {Object} The updated booking record.
+ * @throws {Error} If an error occurs during the database operation.
+ *
  */
   static async update(id, bookingData) {
     try {
@@ -111,6 +135,18 @@ class Booking {
     }
   }
   
+/**
+ *  `delete` Method: Deletes a booking record from the database.
+ *
+ * Flow:
+ * 1. Executes an SQL `DELETE` query using the provided `id` to remove the booking record.
+ * 2. Handles any errors during the database operation and throws a descriptive error message.
+ *
+ * @param {String} id - The unique identifier of the booking.
+ * @returns {void}
+ * @throws {Error} If an error occurs during the database operation.
+ * 
+ */
 
   static async delete(id) {
     try {

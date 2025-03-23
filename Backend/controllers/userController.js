@@ -1,7 +1,19 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
-
+/**
+ * `getUsers` Function: Fetches all user records from the database.
+ * 
+ * Flow:
+ * 1. Calls the `getAll` method from the `User` model to retrieve all user records.
+ * 2. Returns the list of users as a JSON response.
+ * 3. Handles any errors that occur during the operation and returns an error response.
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Object} List of all user records.
+ * 
+ */
 const getUsers = async (req, res) => {
   try {
     const users = await User.getAll();
@@ -11,6 +23,20 @@ const getUsers = async (req, res) => {
   }
 };
 
+/**
+ * `getUserById` Function: Retrieves a specific user record based on the provided `id`.
+ * 
+ * Flow:
+ * 1. Calls the `findById` method from the `User` model to fetch the user record.
+ * 2. Checks if the user record exists and returns it if found.
+ * 3. Returns the user record as a JSON response.
+ * 4. Handles any errors that occur during the operation and returns an error response.
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Object} The user record if found.
+ * 
+ */
 const getUserById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -24,6 +50,24 @@ const getUserById = async (req, res) => {
     }
 };
 
+/**
+ * `createUser` Function: Adds a new user record to the database after performing necessary validation checks.
+ *
+ * Flow:
+ * 1. Extracts user details (`name`, `email`, `password`) from the input `req.body`.
+ * 2. Validates the input:
+ *    - Ensures all required fields (`name`, `email`, `password`) are provided.
+ *    - Checks if the provided email is already registered in the database.
+ * 3. Hashes the user's password using a secure hashing algorithm.
+ * 4. Executes an SQL `INSERT` query to add the new user record to the `users` table.
+ * 5. Returns the newly created user record as the result.
+ * 6. Handles any errors during the operation and returns an error response.
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Object} The newly created user record.
+ * 
+ */ 
 const createUser = async (req, res) => {
   try {
     const user = await User.create(req.body);
@@ -69,20 +113,21 @@ const deleteUser = async (req, res) => {
  *    - Responds with the token and the user's details (ID, name, email).
  * 9. Handles any unexpected errors by returning a 500 response with the error details.
  *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Object} Token and user details on successful login.
+ * 
  */
-
 const loginUser = async (req, res) => {
   try {
       const { email, password } = req.body;
 
-      // Validate Input
       if (!email || !password) {
           return res.status(400).json({ error: "Email and password are required." });
       }
 
       const normalizedEmail = email.toLowerCase(); 
 
-      // Fetch user from DB
       const user = await User.findByEmail(normalizedEmail);
       if (!user) {
           return res.status(401).json({ error: "User not found." });

@@ -11,6 +11,9 @@ class User {
  * 2. Returns an array of all user records.
  * 3. Handles any errors during the database operation and throws a descriptive error message.
  * 
+ * @param {Array} List of all users.
+ * @throws {Error} If an error occurs during the database query.
+ * 
  */
   static async getAll() {
     try {
@@ -28,6 +31,10 @@ class User {
  * 1. Executes an SQL `SELECT` query using the provided `id` as a parameter to fetch a matching record.
  * 2. Returns the user object if a matching record is found.
  * 3. Handles any errors during the database operation and throws a descriptive error message.
+ * 
+ * @param {String} id - The unique identifier of the user.
+ * @returns {Object} The user record if found.
+ * @throws {Error} If an error occurs during the database query or if no record is found.
  * 
  */
   static async findById(id) {
@@ -55,6 +62,14 @@ class User {
  * 4. If all checks pass, inserts the new user into the database with the provided details.
  * 5. Returns the newly created user's details as the result.
  * 6. Handles any errors during the process and throws a descriptive error message.
+ * 
+ * @param {Object} userData - Data object containing user details.
+ * @param {String} userData.name - The name of the user.
+ * @param {String} userData.email - The email address of the user.
+ * @param {String} userData.password - The password of the user.
+ * @param {String} userData.phone - The phone number of the user.
+ * @returns {Object} The newly created user record.
+ * @throws {Error} If an error occurs during the database operation or if validation checks fail.
  * 
  */
   static async create(userData) {
@@ -111,6 +126,12 @@ class User {
  * 5. If the credentials are valid, returns an object containing user details (excluding the password for security).
  * 6. Handles any errors during the process and throws a descriptive error message.
  *
+ * @param {Object} userData - Data object containing user login details.
+ * @param {String} userData.email - The email address of the user.
+ * @param {String} userData.password - The password of the user.
+ * @returns {Object} The user details if authentication is successful.
+ * @throws {Error} If an error occurs during the database operation or if the credentials are invalid.
+ * 
  */
   static async login({email, password}){
     try{
@@ -148,6 +169,10 @@ class User {
  * 3. Returns the user object if found.
  * 4. Handles any errors during the process and throws a descriptive error message.
  *
+ * @param {String} email - The email address of the user.
+ * @returns {Object} The user record if found.
+ * @throws {Error} If an error occurs during the database operation or if the user is not found.
+ * 
  */
   static async findByEmail(email) {
     try {
@@ -170,6 +195,15 @@ class User {
  * 3. Executes an SQL `UPDATE` query to update the user's details in the database, using the new or retained values.
  * 4. Returns the updated user object as the result of the operation.
  * 5. Handles any errors during the process and throws a descriptive error message.
+ * 
+ * @param {String} id - The unique identifier of the user.
+ * @param {Object} userData - Data object containing updated user details.
+ * @param {String} [userData.name] - Updated user name.
+ * @param {String} [userData.email] - Updated user email.
+ * @param {String} [userData.password] - Updated user password.
+ * @param {String} [userData.phone] - Updated user phone number.
+ * @returns {Object} The updated user record.
+ * @throws {Error} If an error occurs during the database operation or if the user is not found.
  * 
  */
   static async update(id, userData) {
@@ -199,7 +233,17 @@ class User {
     }
   }
   
-
+/*
+* `delete` Method: Deletes a user record from the database based on the provided `id`.
+*
+* Flow:
+* 1. Executes an SQL `DELETE` query to remove the user record with the matching `id`.
+* 2. Handles any errors during the process and throws a descriptive error message.
+*
+* @param {String} id - The unique identifier of the user.
+* @throws {Error} If an error occurs during the database operation.
+*
+*/
   static async delete(id) {
     try {
       await pool.query(`DELETE FROM users WHERE id = $1`, [id]);
